@@ -1,1 +1,8 @@
 name = Queues
+Description = Entity for building queues of entities
+core = 7.x
+
+dependencies[] = ctools
+dependencies[] = entity
+dependencies[] = entityreference
+dependencies[] = views
