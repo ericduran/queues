@@ -251,7 +251,7 @@ function _queues_create_entityreference_field($QueueEntityType, $field_name, $en
       'cardinality' => $QueueEntityType->settings['entityreference_field']['cardinality'],
       'entity_types' => array($entity_type),
       'translatable' => FALSE,
-      'locked' => TRUE,
+      'locked' => FALSE, // Lets not lock it for now.
       'settings' => array(
         'target_type' => $QueueEntityType->target,
         'handler' => 'base',
