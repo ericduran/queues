@@ -2,9 +2,9 @@
 
 namespace Drupal\Queues\tests\units;
 
-require_once '../mageekguy.atoum.phar';
+require_once './../mageekguy.atoum.phar';
 
-include '../../queues.helpers.inc';
+include './../../queues.helpers.inc';
 
 use \mageekguy\atoum;
 use \Drupal\Queues;
