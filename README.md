@@ -1,5 +1,7 @@
 # Queues
 
+[![Build Status](https://travis-ci.org/ericduran/queues.png?branch=7.x-1.x)](https://travis-ci.org/ericduran/queues)
+
 So this is extremely simalar to Entity Queues. As a matter of fact the Queue Type selection
 form was taken from the Entity Queue module.
 
