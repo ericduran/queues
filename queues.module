@@ -9,6 +9,7 @@
 // Load our classes and helper functions.
 // Yes we just blatantly load them because entity api
 // is being silly.
+include_once 'queues.helpers.inc';
 include_once 'queues.entity.inc';
 include_once 'queues.type.entity.inc';
 include_once 'queues.admin.inc';

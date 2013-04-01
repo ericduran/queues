@@ -5,6 +5,7 @@
  *
  * Class API and helper for our QueueEntityType.
  */
+use \Drupal\Queues;
 
 /**
  * QueueEntityType
@@ -206,7 +207,8 @@ function queues_type_form_submit(&$form, &$form_state) {
  *   An EntityQueue object.
  */
 function _queues_type_ensure_instance(QueueEntityType $QueueEntityType) {
-  $field_name = _queues_get_target_field_name($QueueEntityType->target);
+  $QueuesHelpers = new Queues\QueuesHelpers();
+  $field_name = $QueuesHelpers->get_target_field_name($QueueEntityType->target);
 
   if (!field_info_instance('queues', $field_name, $QueueEntityType->type)) {
     _queues_create_entityreference_field($QueueEntityType, $field_name, 'queues', $QueueEntityType->type, t('Queue items'), 0, array());
@@ -287,25 +289,5 @@ function _queues_create_entityreference_field($QueueEntityType, $field_name, $en
       'display' => $display,
     );
     field_create_instance($instance);
-  }
-}
-
-/**
- * Helper function for getting the name of a entityreference field.
- *
- * @param string $entity_type
- *   A Drupal entity type.
- *
- * @return string
- *   The name of the entityreference field for the given entity type.
- */
-function _queues_get_target_field_name($entity_type) {
-  if (drupal_strlen($entity_type) <= 29) {
-    return 'field_qt_' . $entity_type;
-  }
-  else {
-    // Field names cannot be longer than 32 characters, so have to use a hashing
-    // trick in order to get a human-readable field name for long entity types.
-    return 'field_qt_' . substr($entity_type, 0, 20) . '_' . substr(md5($entity_type), 0, 8);
   }
 }

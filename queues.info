@@ -6,3 +6,5 @@ dependencies[] = ctools
 dependencies[] = entity
 dependencies[] = entityreference
 dependencies[] = views
+
+php = 5.3
