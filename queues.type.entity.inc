@@ -207,8 +207,7 @@ function queues_type_form_submit(&$form, &$form_state) {
  *   An EntityQueue object.
  */
 function _queues_type_ensure_instance(QueueEntityType $QueueEntityType) {
-  $QueuesHelpers = new Queues\QueuesHelpers();
-  $field_name = $QueuesHelpers->get_target_field_name($QueueEntityType->target);
+  $field_name = _queues_get_target_field_name($QueueEntityType->target);
 
   if (!field_info_instance('queues', $field_name, $QueueEntityType->type)) {
     _queues_create_entityreference_field($QueueEntityType, $field_name, 'queues', $QueueEntityType->type, t('Queue items'), 0, array());
