@@ -10,5 +10,4 @@ dependencies[] = views
 files[] = queues.admin.inc
 files[] = queues.entity.inc
 files[] = queues.type.entity.inc
-
 php = 5.3

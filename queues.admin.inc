@@ -71,7 +71,7 @@ function queues_form($form, $form_state, $QueueEntity, $op) {
   // TODO: Rename this form. This can clash with hook_form.
 
   if ($op == 'add') {
-    // TODO: HacK!!! Time is of the essense, or is it?
+    // TODO: HacK!!! Time is of the essence, or is it?
     $bundle = arg(4);
     $QueueEntity->type = $bundle;
   }
