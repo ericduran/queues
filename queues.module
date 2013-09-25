@@ -14,9 +14,21 @@ include_once 'queues.entity.inc';
 include_once 'queues.type.entity.inc';
 include_once 'queues.admin.inc';
 
- /**
-  * Implements hook_entity_info().
-  */
+
+/**
+ * Implements hook_views_api().
+ */
+function queues_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'queues') . '/views',
+  );
+}
+
+
+/**
+ * Implements hook_entity_info().
+ */
 function queues_entity_info() {
 
   $info = array(
@@ -26,10 +38,13 @@ function queues_entity_info() {
       'entity class' => 'QueueEntity',
       'controller class' => 'EntityAPIController',
       'base table' => 'queues',
+      'revision table' => 'queues_revision',
       'fieldable' => TRUE,
       'entity keys' => array(
         'id' => 'qid',
         'bundle' => 'type',
+        'revision' => 'vid',
+        'label' => 'title',
       ),
       'bundles' => array(),
       'bundle keys' => array(
@@ -91,6 +106,35 @@ function queues_entity_info_alter(&$entity_info) {
   }
 }
 
+/**
+ * Implements hook_menu().
+ */
+function queues_menu() {
+  $items = array();
+
+  if (module_exists('revision_scheduler')) {
+    $items['admin/content/queues/manage/%queue/schedule'] = array(
+      'title' => 'Schedule',
+      'page callback' => 'revision_scheduler_list_page',
+      'page arguments' => array('queues', 4),
+      'access arguments' => array('schedule revisions'),
+      'file' => 'revision_scheduler.pages.inc',
+      'file path' => drupal_get_path('module', 'revision_scheduler'),
+      'type' => MENU_LOCAL_TASK,
+    );
+    $items['admin/content/queues/manage/%queue/schedule/add'] = array(
+      'title' => 'Add scheduled revision',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('revision_scheduler_add_form', 'queues', 4),
+      'access arguments' => array('schedule revisions'),
+      'file' => '/revision_scheduler.pages.inc',
+      'file path' => drupal_get_path('module', 'revision_scheduler'),
+      'type' => MENU_LOCAL_ACTION,
+    );
+  }
+
+  return $items;
+}
 
 /**
  * Implements hook_permission().
@@ -120,6 +164,39 @@ function queues_permission() {
   }
 
   return $permissions;
+}
+
+/**
+ * Implements hook_entity_revision_operation_info().
+ */
+function queues_entity_revision_operation_info() {
+  $operations['queues']['revert'] = array(
+    'label' => t('Revert'),
+    'access arguments' => array('revert revisions'),
+    'callback' => 'queues_queue_revision_operation_revert',
+  );
+  $operations['queues']['delete'] = array(
+    'label' => t('Delete'),
+    'access arguments' => array('delete revisions'),
+    'callback' => 'queues_queue_revision_operation_delete',
+  );
+
+  return $operations;
+}
+
+/**
+ * Queue revision operation callback: revert to revision.
+ */
+function queues_queue_revision_operation_revert($queue) {
+  entity_revision_set_default('queues', $queue);
+  $queue->save();
+}
+
+/**
+ * Queue revision operation callback: delete revision.
+ */
+function queues_queue_revision_operation_delete($queue) {
+  entity_delete('queues', $queue->qid);
 }
 
 /**
@@ -155,4 +232,22 @@ function queue_entity_access($op = 'edit', $queue = NULL, $account = NULL) {
  */
 function queues_type_access($op, $type = NULL, $account = NULL) {
   return user_access('administer queue types', $account);
+}
+
+/**
+ * Loads a queue entity.
+ *
+ * @param $qid
+ *   The id of the queue.
+ *
+ * @param bool $reset
+ *   Defaults to FALSE. If FALSE the object will be loaded from a static cache
+ *   when possible.
+ *
+ * @return object or NULL
+ */
+function queue_load($qid, $reset = FALSE) {
+  $entities = entity_load('queues', array($qid), $reset);
+
+  return !empty($entities) ? $entities[$qid] : NULL;
 }

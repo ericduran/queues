@@ -15,6 +15,13 @@ function queues_schema() {
         'not null' => TRUE,
         'description' => 'Primary Key: Unique queue ID.',
       ),
+      'vid' => array(
+        'description' => 'The primary identifier for this version.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
       'type' => array(
         'description' => 'The bundle this queue belongs to.',
         'type' => 'varchar',
@@ -29,8 +36,56 @@ function queues_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'status' => array(
+        'description' => 'Boolean indicating whether the queue is published (visible to non-administrators).',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
     ),
     'primary key' => array('qid'),
+  );
+
+  $schema['queues_revision'] = array(
+    'fields' => array(
+      'qid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Primary Key: Unique queue ID.',
+      ),
+      'vid' => array(
+        'description' => 'The primary identifier for this version.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'The bundle this queue belongs to.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'title' => array(
+        'description' => 'The human-readable name of this queue.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'status' => array(
+        'description' => 'Boolean indicating whether the queue is published (visible to non-administrators).',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+    'primary key' => array('vid'),
+    'unique keys' => array(
+      'vid' => array('vid'),
+    ),
   );
 
   $schema['queues_type'] = array(
@@ -88,4 +143,30 @@ function queues_schema() {
   );
 
   return $schema;
+}
+
+
+/**
+ * Add Status and VID column and Revision to queues table.
+ */
+function queues_update_7001() {
+  // Add Status column to queues table.
+  db_add_field('queues', 'status', array(
+    'description' => 'Boolean indicating whether the queue is published (visible to non-administrators).',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 1,
+  ));
+
+  // Add VID column to queues table.
+  db_add_field('queues', 'vid', array(
+    'description' => 'The primary identifier for this version.',
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  ));
+
+  db_create_table('queues_revision', drupal_get_schema_unprocessed('queues', 'queues_revision'));
+
 }

@@ -288,5 +288,6 @@ function _queues_create_entityreference_field($QueueEntityType, $field_name, $en
       'display' => $display,
     );
     field_create_instance($instance);
+    field_cache_clear(TRUE);
   }
 }
