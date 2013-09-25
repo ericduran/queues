@@ -11,9 +11,6 @@ class QueueEntityUIController extends EntityDefaultUIController {
   * class hook_menu() sucks for content management.
   */
   public function hook_menu() {
-    $items = array();
-    $id_count = count(explode('/', $this->path));
-    $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%entity_object';
     $plural_label = isset($this->entityInfo['plural label']) ? $this->entityInfo['plural label'] : $this->entityInfo['label'] . 's';
 
     // Lets get the default menu items.
@@ -50,6 +47,21 @@ class QueueEntityUIController extends EntityDefaultUIController {
         'type' => MENU_LOCAL_ACTION,
       );
     }
+    $items['admin/content/queues/manage/%/revision/%'] = array(
+      'title' => t('Edit'),
+      'access arguments' => array('edit', 4),
+      'access callback' => 'queue_entity_access',
+      'page callback' => 'queues_revision_edit',
+      'page arguments' => array(4, 6),
+    );
+
+    $items['admin/content/queues/manage/%/revision/%/delete'] = array(
+      'title' => t('Delete'),
+      'access arguments' => array('delete', 4),
+      'access callback' => 'queue_entity_access',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('queues_confirm_delete_revision_form', 4, 6),
+    );
 
     return $items;
   }
@@ -67,14 +79,12 @@ class QueueEntityUIController extends EntityDefaultUIController {
   }
 }
 
-function queues_form($form, $form_state, $QueueEntity, $op) {
-  // TODO: Rename this form. This can clash with hook_form.
+function queues_revision_edit($QueueEntity, $revision_id) {
+  $entity = entity_revision_load('queues', $revision_id);
+  return entity_ui_get_form('queues', $entity, 'edit');
+}
 
-  if ($op == 'add') {
-    // TODO: HacK!!! Time is of the essence, or is it?
-    $bundle = arg(4);
-    $QueueEntity->type = $bundle;
-  }
+function queues_form($form, $form_state, $QueueEntity, $op) {
 
   $form['title'] = array(
     '#type' => 'textfield',
@@ -84,17 +94,62 @@ function queues_form($form, $form_state, $QueueEntity, $op) {
     '#weight' => -10,
   );
 
+  $form['options'] = array(
+    '#type' => 'vertical_tabs',
+  );
+
+  $form['options']['publishing'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Publishing Options'),
+  );
+
+  $form['options']['publishing']['status'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Published'),
+    '#default_value' => $QueueEntity->status,
+  );
+
+  $form['options']['publishing']['revision']['is_new_revision'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Create new revision'),
+    '#default_value' => $QueueEntity->default_revision,
+    '#id' => 'edit-revision',
+  );
+
+  if ($QueueEntity->is_new === TRUE) {
+    // On new Entities, Hide the checkbox and always make a new revision.
+    $form['options']['publishing']['revision']['#access'] = FALSE;
+    $form['default_revision'] = array(
+      '#type' => 'value',
+      '#value' => TRUE,
+    );
+  }
+  else {
+    $form['options']['publishing']['revision']['default_revision'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Set Revision as default'),
+      '#default_value' => $QueueEntity->isDefaultRevision(),
+      '#states' => array(
+        // Hide if the option above is disabled, to avoid potential dataloss.
+        'invisible' => array(
+          ':input[name="is_new_revision"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+  }
+
+
   field_attach_form('queues', $QueueEntity, $form, $form_state);
 
   $form['actions'] = array(
-    '#type' => 'actions'
+    '#type' => 'actions',
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Save queue'), // TODO: Save the "label" of the queue.
+      '#weight' => 20,
+    ),
   );
 
-  $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save queue'), // TODO: Save the "label" of the queue.
-    '#weight' => 20,
-  );
 
   return $form;
 }
@@ -106,3 +161,38 @@ function queues_form_submit($form, &$form_state) {
   $form_state['redirect'] = 'admin/content/queues';
 }
 
+function queues_confirm_delete_revision_form($form, &$form_state, $qid, $vid) {
+  $queue = queue_load($qid);
+
+  if ($queue->vid == $vid) {
+    drupal_set_message(t('This revision cannot be deleted because it is currently the primary revision for this queue'), 'error');
+    drupal_goto('admin/content/queues/manage/' . $qid . '/revisions-state-flow-states');
+  }
+  else {
+    $form = array(
+      'qid' => array(
+        '#type' => 'value',
+        '#value' => $qid,
+      ),
+      'vid' => array(
+        '#type' => 'value',
+        '#value' => $vid,
+      ),
+    );
+    return confirm_form($form, t('Are you sure you want to delete this revision?'), "admin/content/queues/manage/$qid/revisions-state-flow-states", t('This action cannot be undone.'), t('Delete revision'), t('Cancel'));
+  }
+}
+
+function queues_confirm_delete_revision_form_submit($form, &$form_state) {
+  $qid = $form_state['values']['qid'];
+  $vid = $form_state['values']['vid'];
+
+  if (entity_revision_delete('queues', $vid)) {
+    drupal_set_message(t('The revision has been successfully deleted.'));
+  }
+  else {
+    drupal_set_message(t('The revision could not be deleted.'), 'error');
+  }
+
+  drupal_goto('admin/content/queues/manage/' . $qid . '/revisions-state-flow-states');
+}
