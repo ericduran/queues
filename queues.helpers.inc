@@ -5,7 +5,7 @@
  *
  * Helper functions for Queues.
  *
- * Seperating them out for simpler unit test.
+ * Separating them out for simpler unit test.
  */
 
 /**
