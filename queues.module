@@ -2,7 +2,6 @@
 
 /**
  * @file
- *
  * Module file for Queues.
  */
 
@@ -167,7 +166,7 @@ function queues_permission() {
 }
 
 /**
- * Pre-process the add scheduled revision local action to add a destination query.
+ * Pre-process the add scheduled revision local action to add a destination.
  */
 function queues_preprocess_menu_local_action(&$variables) {
   $link = &$variables['element']['#link'];
@@ -215,12 +214,13 @@ function queues_queue_revision_operation_delete($queue) {
  *
  * @param string $op
  *   The operation being performed. One of 'edit', 'create', 'delete'.
- * @param $queue
+ * @param QueueEntity $queue
  *   Optionally a queue or a queue type to check access for. If nothing is
  *   given, access for all queue is determined.
  * @param stdClass $account
  *   The user to check for. Leave it to NULL to check for the global user.
- * @return boolean
+ *
+ * @return bool
  *   Whether access is allowed or not.
  */
 function queue_entity_access($op = 'edit', $queue = NULL, $account = NULL) {
@@ -248,14 +248,15 @@ function queues_type_access($op, $type = NULL, $account = NULL) {
 /**
  * Loads a queue entity.
  *
- * @param $qid
+ * @param numeric $qid
  *   The id of the queue.
  *
  * @param bool $reset
  *   Defaults to FALSE. If FALSE the object will be loaded from a static cache
  *   when possible.
  *
- * @return object or NULL
+ * @return object|null
+ *   The loaded queues
  */
 function queue_load($qid, $reset = FALSE) {
   $entities = entity_load('queues', array($qid), $reset);
