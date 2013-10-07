@@ -167,6 +167,17 @@ function queues_permission() {
 }
 
 /**
+ * Pre-process the add scheduled revision local action to add a destination query.
+ */
+function queues_preprocess_menu_local_action(&$variables) {
+  $link = &$variables['element']['#link'];
+  if ($link['path'] == 'admin/content/queues/manage/%/schedule/add') {
+    $link['localized_options'] += array('query' => array());
+    $link['localized_options']['query'] += drupal_get_destination();
+  }
+}
+
+/**
  * Implements hook_entity_revision_operation_info().
  */
 function queues_entity_revision_operation_info() {
