@@ -50,6 +50,21 @@ class QueueEntityUIController extends EntityDefaultUIController {
         'type' => MENU_LOCAL_ACTION,
       );
     }
+    $items['queues/view/%queue'] = array(
+      'title' => t('View Queues'),
+      'access arguments' => array('view', 2),
+      'access callback' => 'queue_entity_access',
+      'page callback' => 'queue_entity_view',
+      'page arguments' => array(2),
+    );
+    $items['queues/view/%queue/revision/%'] = array(
+      'title' => t('View Queues Revision'),
+      'access arguments' => array('view', 4),
+      'access callback' => 'queue_entity_access',
+      'page callback' => 'queue_entity_revision_view',
+      'page arguments' => array(2, 4),
+    );
+
     $items['admin/content/queues/manage/%/revision/%'] = array(
       'title' => t('Edit'),
       'access arguments' => array('edit', 4),
@@ -102,6 +117,51 @@ function queues_revision_edit($QueueEntity, $revision_id) {
   return entity_ui_get_form('queues', $entity, 'edit');
 }
 
+
+/**
+ * View a specific Queue Revision.
+ *
+ * @param QueueEntity $queue_entity
+ *   The Queue Entity being viewed.
+ *
+ * @param int $revision_id
+ *   The Revision ID of the Queue being viewed.
+ *
+ * @return array
+ *   A render array.
+ */
+function queue_entity_revision_view($queue_entity, $revision_id = NULL) {
+  $entity = entity_revision_load('queues', $revision_id);
+  return entity_view('queues', array($entity));
+}
+
+/**
+ * View a specific Queue.
+ *
+ * @param QueueEntity $queue_entity
+ *   The Queue Entity being viewed.
+ *
+ * @param int $revision_id
+ *   The Revision ID of the Queue being viewed.
+ *
+ * @return array
+ *   A render array.
+ */
+function queue_entity_view($queue_entity, $revision_id = NULL) {
+  return entity_view('queues', array($queue_entity));
+}
+
+/**
+ * Queues Form.
+ *
+ * @param array $form
+ *   Form array.
+ * @param array $form_state
+ *   Form State array.
+ * @param array $QueueEntity
+ * @param string $op
+ * @return mixed
+ */
 function queues_form($form, $form_state, $QueueEntity, $op) {
 
   $form['title'] = array(
