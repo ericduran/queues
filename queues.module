@@ -159,6 +159,9 @@ function queues_permission() {
       "edit any $type_name queue" => array(
         'title' => t('%type_name: Edit any queue', array('%type_name' => $type->label)),
       ),
+      "create $type_name queue" => array(
+        'title' => t('%type_name: Create queues', array('%type_name' => $type->label)),
+      ),
     );
   }
 
@@ -228,10 +231,20 @@ function queue_entity_access($op = 'edit', $queue = NULL, $account = NULL) {
     return TRUE;
   }
   if (isset($queue) && $type_name = $queue->type) {
-    // We only do edit.
-    $op = 'edit';
-    if (user_access("edit any $type_name queue", $account)) {
-      return TRUE;
+    $type_name = check_plain($type->type);
+    
+    switch ($op) {
+      case 'edit':
+        if (user_access("edit any $type_name queue", $account)) {
+          return TRUE;
+        
+        break;
+
+      case 'create':
+        if (user_access("create $type_name queue", $account)) {
+          return TRUE;
+        }
+        break;
     }
   }
   return FALSE;
