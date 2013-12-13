@@ -103,18 +103,6 @@ class QueueEntityUIController extends EntityDefaultUIController {
 }
 
 /**
- * Queues revision edit form.
- *
- * @param $QueueEntity
- * @param $revision_id
- * @return array()
- */
-function queues_revision_edit($QueueEntity, $revision_id) {
-  $entity = entity_revision_load('queues', $revision_id);
-  return entity_ui_get_form('queues', $entity, 'edit');
-}
-
-/**
  * Queues Revision Form.
  *
  * @param QueueEntity $QueueEntity
