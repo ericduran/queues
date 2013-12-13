@@ -237,7 +237,7 @@ function queue_entity_access($op = 'edit', $queue = NULL, $account = NULL) {
       case 'edit':
         if (user_access("edit any $type_name queue", $account)) {
           return TRUE;
-
+        }
         break;
 
       case 'create':
