@@ -66,12 +66,12 @@ function queues_workbench_state_flow_entity_plugins() {
     'events' => array(
       'draft' => array(
         'label' => t('Draft'),
-        'origin' => 'draft',
+        'origin' => array('draft', 'published'),
         'target' => 'draft',
       ),
       'publish' => array(
         'label' => t('Publish'),
-        'origin' => array('draft', 'unpublished', 'publish'),
+        'origin' => array('draft', 'unpublished', 'published'),
         'target' => 'published',
       ),
       'unpublish' => array(
