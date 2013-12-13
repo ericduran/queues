@@ -2,7 +2,6 @@
 
 /**
  * @file
- *
  * Module file for Queues.
  */
 
@@ -61,7 +60,7 @@ function queues_entity_info() {
       ),
     ),
 
-    // Set up another entity to use for storage as the bundle for queues
+    // Set up another entity to use for storage as the bundle for queues.
     'queues_type' => array(
       'label' => t('Queue type'),
       'plural label' => t('Queues'),
@@ -140,8 +139,8 @@ function queues_menu() {
  * Implements hook_permission().
  */
 function queues_permission() {
-  // We set up permisssions to manage entity types, manage all entities and the
-  // permissions for each individual entity
+  // We set up permissions to manage entity types, manage all entities and the
+  // permissions for each individual entity.
   $permissions = array(
     'administer queue types' => array(
       'title' => t('Administer queue types'),
@@ -153,17 +152,31 @@ function queues_permission() {
     ),
   );
 
-  //Generate permissions per queue
+  // Generate permissions per queue.
   foreach (queues_type_get_types() as $type) {
     $type_name = check_plain($type->type);
     $permissions += array(
       "edit any $type_name queue" => array(
         'title' => t('%type_name: Edit any queue', array('%type_name' => $type->label)),
       ),
+      "create $type_name queue" => array(
+        'title' => t('%type_name: Create queues', array('%type_name' => $type->label)),
+      ),
     );
   }
 
   return $permissions;
+}
+
+/**
+ * Pre-process the add scheduled revision local action to add a destination.
+ */
+function queues_preprocess_menu_local_action(&$variables) {
+  $link = &$variables['element']['#link'];
+  if ($link['path'] == 'admin/content/queues/manage/%/schedule/add') {
+    $link['localized_options'] += array('query' => array());
+    $link['localized_options']['query'] += drupal_get_destination();
+  }
 }
 
 /**
@@ -202,14 +215,15 @@ function queues_queue_revision_operation_delete($queue) {
 /**
  * Determines whether the given user has access to a queue.
  *
- * @param $op
+ * @param string $op
  *   The operation being performed. One of 'edit', 'create', 'delete'.
- * @param $queue
+ * @param QueueEntity $queue
  *   Optionally a queue or a queue type to check access for. If nothing is
  *   given, access for all queue is determined.
- * @param $account
+ * @param stdClass $account
  *   The user to check for. Leave it to NULL to check for the global user.
- * @return boolean
+ *
+ * @return bool
  *   Whether access is allowed or not.
  */
 function queue_entity_access($op = 'edit', $queue = NULL, $account = NULL) {
@@ -217,10 +231,20 @@ function queue_entity_access($op = 'edit', $queue = NULL, $account = NULL) {
     return TRUE;
   }
   if (isset($queue) && $type_name = $queue->type) {
-    // We only do edit.
-    $op = 'edit';
-    if (user_access("edit any $type_name queue", $account)) {
-      return TRUE;
+    $type_name = check_plain($type->type);
+
+    switch ($op) {
+      case 'edit':
+        if (user_access("edit any $type_name queue", $account)) {
+          return TRUE;
+
+        break;
+
+      case 'create':
+        if (user_access("create $type_name queue", $account)) {
+          return TRUE;
+        }
+        break;
     }
   }
   return FALSE;
@@ -237,14 +261,15 @@ function queues_type_access($op, $type = NULL, $account = NULL) {
 /**
  * Loads a queue entity.
  *
- * @param $qid
+ * @param numeric $qid
  *   The id of the queue.
  *
  * @param bool $reset
  *   Defaults to FALSE. If FALSE the object will be loaded from a static cache
  *   when possible.
  *
- * @return object or NULL
+ * @return object|null
+ *   The loaded queues
  */
 function queue_load($qid, $reset = FALSE) {
   $entities = entity_load('queues', array($qid), $reset);

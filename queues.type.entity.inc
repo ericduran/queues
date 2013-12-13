@@ -77,7 +77,7 @@ function queues_type_form($form, $form_state, $QueueEntityType, $op = 'edit') {
     '#type' => 'textfield',
     '#title' => t('Name'),
     '#default_value' => $QueueEntityType->label,
-    '#description' => t('The human-readable name of this queue type. This text will be displayed as part of the list on the Add new queue page. It is recommended that this name begin with a capital letter and contain only letters, numbers, and spaces. This name must be unique.')
+    '#description' => t('The human-readable name of this queue type. This text will be displayed as part of the list on the Add new queue page. It is recommended that this name begin with a capital letter and contain only letters, numbers, and spaces. This name must be unique.'),
   );
 
   $form['type'] = array(
@@ -89,7 +89,7 @@ function queues_type_form($form, $form_state, $QueueEntityType, $op = 'edit') {
       'exists' => 'queues_type_get_types',
       'source' => array('label'),
     ),
-    '#description' => t('A unique machine-readable name for this queue type. It must only contain lowercase letters, numbers, and underscores. This name will be used for constructing the URL of the Add new queue page, in which underscores will be converted into hyphens.')
+    '#description' => t('A unique machine-readable name for this queue type. It must only contain lowercase letters, numbers, and underscores. This name will be used for constructing the URL of the Add new queue page, in which underscores will be converted into hyphens.'),
   );
 
   // Get valid target entity types.
@@ -159,13 +159,13 @@ function queues_type_form($form, $form_state, $QueueEntityType, $op = 'edit') {
     '#options' => $bundles,
     '#default_value' => !empty($QueueEntityType->settings['entityreference_field']['target_bundles']) ? $QueueEntityType->settings['entityreference_field']['target_bundles'] : array(),
     '#multiple' => TRUE,
-    '#description' => t('The bundles of the entity type that can be referenced. Optional, leave empty for all bundles.')
+    '#description' => t('The bundles of the entity type that can be referenced. Optional, leave empty for all bundles.'),
   );
 
 
 
   $form['actions'] = array(
-    '#type' => 'actions'
+    '#type' => 'actions',
   );
 
   $form['actions']['submit'] = array(

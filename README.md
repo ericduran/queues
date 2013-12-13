@@ -1,11 +1,24 @@
-# Queues
+#Queues
 
 [![Build Status](https://travis-ci.org/ericduran/queues.png?branch=7.x-1.x)](https://travis-ci.org/ericduran/queues)
 
-So this is extremely simalar to Entity Queues. As a matter of fact the Queue Type selection
-form was taken from the Entity Queue module.
+Requirements:
+ - ctools
+ - entity
+ - entityreference
+ - views
 
-Sadly we needed a different module because we want to create Queue Bundles, which a user can
-have multiple off. For example, you can create a Queue called "Promo Queue". Editors can then
-go and make 100 Promo Queue which different items in them.
+Features:
+ - Adds new Queues entity
+  - Revisionable
+  - Supports multiple Bundles
+  - Supports references to any Entity/Bundle
+ - Full State Machine Support (Queues Workbench)
+ - Supports Revision Scheduler Module (Queues Workbench)
+    - Revision Revert Operation
+    - Revision Delete Operation
+    - Revision Publish Operation (Queues Workbench integration)
+    - Revision Unpublish Operation (Queues Workbench integration)
 
+Issues currently being worked on:
+ - Site Preview System (SPS) Integration

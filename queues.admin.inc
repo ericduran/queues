@@ -4,12 +4,14 @@
  * @file
  * Profile type editing UI.
  */
+
 class QueueEntityUIController extends EntityDefaultUIController {
 
- /**
-  * Overrides hook_menu() defaults. We need to do this. The parent
-  * class hook_menu() sucks for content management.
-  */
+  /**
+   * Overrides hook_menu() defaults. We need to do this.
+   *
+   * The parent class hook_menu() sucks for content management.
+   */
   public function hook_menu() {
     $plural_label = isset($this->entityInfo['plural label']) ? $this->entityInfo['plural label'] : $this->entityInfo['label'] . 's';
 
@@ -39,7 +41,7 @@ class QueueEntityUIController extends EntityDefaultUIController {
     // Add menu items to add each different type of entity.
     foreach (queues_type_get_types() as $type) {
       $items[$this->path . '/add/' . $type->type] = array(
-        'title' => t('Add @queue', array('@queue' =>$type->label)),
+        'title' => t('Add @queue', array('@queue' => $type->label)),
         'page callback' => 'entity_ui_get_form',
         'page arguments' => array($this->entityType, NULL, 'add'),
         'access callback' => 'entity_access',
@@ -47,6 +49,21 @@ class QueueEntityUIController extends EntityDefaultUIController {
         'type' => MENU_LOCAL_ACTION,
       );
     }
+    $items['queues/view/%queue'] = array(
+      'title' => t('View Queues'),
+      'access arguments' => array('view', 2),
+      'access callback' => 'queue_entity_access',
+      'page callback' => 'queue_entity_view',
+      'page arguments' => array(2),
+    );
+    $items['queues/view/%queue/revision/%'] = array(
+      'title' => t('View Queues Revision'),
+      'access arguments' => array('view', 4),
+      'access callback' => 'queue_entity_access',
+      'page callback' => 'queue_entity_revision_view',
+      'page arguments' => array(2, 4),
+    );
+
     $items['admin/content/queues/manage/%/revision/%'] = array(
       'title' => t('Edit'),
       'access arguments' => array('edit', 4),
@@ -66,6 +83,12 @@ class QueueEntityUIController extends EntityDefaultUIController {
     return $items;
   }
 
+  /**
+   * Overrides hook_menu() defaults.
+   *
+   * @return array
+   *   The form for which the specific queue bundle.
+   */
   public function hook_forms() {
     $forms = parent::hook_forms();
 
@@ -79,11 +102,76 @@ class QueueEntityUIController extends EntityDefaultUIController {
   }
 }
 
+/**
+ * Queues revision edit form.
+ *
+ * @param $QueueEntity
+ * @param $revision_id
+ * @return array()
+ */
 function queues_revision_edit($QueueEntity, $revision_id) {
   $entity = entity_revision_load('queues', $revision_id);
   return entity_ui_get_form('queues', $entity, 'edit');
 }
 
+/**
+ * Queues Revision Form.
+ *
+ * @param QueueEntity $QueueEntity
+ *   The QueueEntity being edited.
+ * @param $revision_id
+ * @return array|mixed
+ */
+function queues_revision_edit($QueueEntity, $revision_id) {
+  $entity = entity_revision_load('queues', $revision_id);
+  return entity_ui_get_form('queues', $entity, 'edit');
+}
+
+
+/**
+ * View a specific Queue Revision.
+ *
+ * @param QueueEntity $queue_entity
+ *   The Queue Entity being viewed.
+ *
+ * @param int $revision_id
+ *   The Revision ID of the Queue being viewed.
+ *
+ * @return array
+ *   A render array.
+ */
+function queue_entity_revision_view($queue_entity, $revision_id = NULL) {
+  $entity = entity_revision_load('queues', $revision_id);
+  return entity_view('queues', array($entity));
+}
+
+/**
+ * View a specific Queue.
+ *
+ * @param QueueEntity $queue_entity
+ *   The Queue Entity being viewed.
+ *
+ * @param int $revision_id
+ *   The Revision ID of the Queue being viewed.
+ *
+ * @return array
+ *   A render array.
+ */
+function queue_entity_view($queue_entity, $revision_id = NULL) {
+  return entity_view('queues', array($queue_entity));
+}
+
+/**
+ * Queues Form.
+ *
+ * @param array $form
+ *   Form array.
+ * @param array $form_state
+ *   Form State array.
+ * @param array $QueueEntity
+ * @param string $op
+ * @return mixed
+ */
 function queues_form($form, $form_state, $QueueEntity, $op) {
 
   $form['title'] = array(
@@ -141,11 +229,12 @@ function queues_form($form, $form_state, $QueueEntity, $op) {
 
   field_attach_form('queues', $QueueEntity, $form, $form_state);
 
+  // TODO: Save the "label" of the queue.
   $form['actions'] = array(
     '#type' => 'actions',
     'submit' => array(
       '#type' => 'submit',
-      '#value' => t('Save queue'), // TODO: Save the "label" of the queue.
+      '#value' => t('Save queue'),
       '#weight' => 20,
     ),
   );

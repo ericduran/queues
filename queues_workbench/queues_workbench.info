@@ -6,3 +6,4 @@ dependencies[] = queues
 dependencies[] = workbench_workflows
 dependencies[] = views
 php = 5.3
+file[] = plugins/queues_state_machine.inc
