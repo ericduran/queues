@@ -324,25 +324,3 @@ function queues_views_data_alter(&$data) {
 
   return $data;
 }
-
-/**
- * Implementation of hook_views_handlers().
- */
-function queues_views_handlers() {
-  return array(
-    'info' => array(
-      'path' => drupal_get_path('module', 'queues') . '/views/handlers',
-    ),
-    'handlers' => array(
-      'queues_views_handler_field_queue_operations' => array(
-        'parent' => 'queues_views_handler_field_operations',
-      ),
-      'queues_views_handler_field_operations' => array(
-        'parent' => 'views_handler_field',
-      ),
-      'queues_views_handler_publish_state' => array(
-        'parent' => 'views_handler_field',
-      ),
-    ),
-  );
-}
