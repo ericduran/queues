@@ -25,6 +25,10 @@ function queues_drush_command() {
  * Command callback to generate queues.
  */
 function drush_queues_generate_queues($num_queues = NULL) {
+  if (!function_exists('drush_generate_include_devel')) {
+    return drush_set_error('devel_generate_missing', t('Devel Generate is missing. Install the devel module to generate queues.'));
+  }
+
   if (drush_generate_is_number($num_queues) == FALSE) {
     return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', t('Invalid number of queues.'));
   }
