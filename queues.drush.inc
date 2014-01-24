@@ -47,4 +47,3 @@ function drush_queues_generate_queues($num_queues = NULL) {
   queues_generate_queues($num_queues, drush_get_option('kill'), $types);
 }
 
-
