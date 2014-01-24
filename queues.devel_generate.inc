@@ -11,6 +11,8 @@
  *   An array of queue types to generate.
  */
 function queues_generate_queues($num, $kill, $types) {
+  module_load_include('inc', 'devel_generate', 'devel_generate.fields');
+
   if ($kill) {
     // TODO.
   }
@@ -30,7 +32,6 @@ function queues_generate_queues($num, $kill, $types) {
     $queue = new QueueEntity($values);
 
     // Populate all core fields on behalf of field.module
-    module_load_include('inc', 'devel_generate', 'devel_generate.fields');
     devel_generate_fields($queue, 'queues', $type);
 
     $queue->save();
