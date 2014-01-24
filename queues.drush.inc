@@ -26,7 +26,7 @@ function queues_drush_command() {
  */
 function drush_queues_generate_queues($num_queues = NULL) {
   if (!function_exists('drush_generate_include_devel')) {
-    return drush_set_error('devel_generate_missing', t('Devel Generate is missing. Install the devel module to generate queues.'));
+    return drush_set_error('DEVEL_GENERATE_MISSING', t('Devel Generate is missing. Install the devel module to generate queues.'));
   }
 
   if (drush_generate_is_number($num_queues) == FALSE) {
