@@ -19,7 +19,7 @@ function queues_generate_queues($num, $kill, $types) {
 
   for ($i = 0; $i < $num; $i++) {
     $title = devel_create_greeking(1, TRUE);
-    $description = devel_create_greeking(mt_rand(2, 255), TRUE);
+    $description = devel_create_greeking(mt_rand(2, 255));
     $type = $types[array_rand($types)];
 
     $values = array(
