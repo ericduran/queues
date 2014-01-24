@@ -39,7 +39,8 @@ function drush_queues_generate_queues($num_queues = NULL) {
   }
   else {
     // TODO use all queue types.
-    $types = array('daily_queue');
+    $info = entity_get_info('queues');
+    $types = array_keys($info['bundles']);
   }
 
   drush_generate_include_devel();
