@@ -1,0 +1,29 @@
+<?php
+
+function queues_generate_queues($num, $kill, $types) {
+  if ($kill) {
+    // TODO.
+  }
+
+  for ($i = 0; $i < $num; $i++) {
+    $title = devel_create_greeking(1, TRUE);
+    $description = devel_create_greeking(mt_rand(2, 255), TRUE);
+    $type = $types[array_rand($types)];
+
+    $values = array(
+      'title' => $title,
+      'type' => $type,
+      'description' => $description,
+      'is_new' => TRUE,
+    );
+
+    $queue = new QueueEntity($values);
+
+    // Populate all core fields on behalf of field.module
+    module_load_include('inc', 'devel_generate', 'devel_generate.fields');
+    devel_generate_fields($queue, 'queues', $type);
+
+    $queue->save();
+  }
+}
+
