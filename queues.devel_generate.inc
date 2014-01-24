@@ -14,7 +14,10 @@ function queues_generate_queues($num, $kill, $types) {
   module_load_include('inc', 'devel_generate', 'devel_generate.fields');
 
   if ($kill) {
-    // TODO.
+    $q = new EntityFieldQuery();
+    $queues = $q->entityCondition('entity_type', 'queues')
+      ->execute();
+    entity_delete_multiple('queues', array_keys($queues['queues']));
   }
 
   for ($i = 0; $i < $num; $i++) {
