@@ -17,7 +17,11 @@ function queues_generate_queues($num, $kill, $types) {
     $q = new EntityFieldQuery();
     $queues = $q->entityCondition('entity_type', 'queues')
       ->execute();
-    entity_delete_multiple('queues', array_keys($queues['queues']));
+
+    $qids = array_keys($queues['queues']);
+    if (!empty($qids)) {
+      entity_delete_multiple('queues', $qids);
+    }
   }
 
   for ($i = 0; $i < $num; $i++) {
