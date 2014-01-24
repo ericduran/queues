@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Implements hook_drush_command().
+ */
 function queues_drush_command() {
   $items = array();
 
@@ -18,6 +21,9 @@ function queues_drush_command() {
   return $items;
 }
 
+/**
+ * Command callback to generate queues.
+ */
 function drush_queues_generate_queues($num_queues = NULL) {
   if (drush_generate_is_number($num_queues) == FALSE) {
     return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', t('Invalid number of queues.'));

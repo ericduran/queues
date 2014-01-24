@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Generate queues.
+ *
+ * @param int $num
+ *   The number of queues to generate.
+ * @param bool $kill
+ *   Set to TRUE to delete all queues before generating.
+ * @param $types
+ *   An array of queue types to generate.
+ */
 function queues_generate_queues($num, $kill, $types) {
   if ($kill) {
     // TODO.
