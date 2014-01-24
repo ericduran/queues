@@ -38,7 +38,6 @@ function drush_queues_generate_queues($num_queues = NULL) {
     $types = drupal_map_assoc(explode(',', $types_option));
   }
   else {
-    // TODO use all queue types.
     $info = entity_get_info('queues');
     $types = array_keys($info['bundles']);
   }
