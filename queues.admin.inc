@@ -160,7 +160,7 @@ function queue_entity_view($queue_entity, $revision_id = NULL) {
  * @param string $op
  * @return mixed
  */
-function queues_form($form, $form_state, $QueueEntity, $op) {
+function queues_form($form, &$form_state, $QueueEntity, $op) {
 
   $form['title'] = array(
     '#type' => 'textfield',
