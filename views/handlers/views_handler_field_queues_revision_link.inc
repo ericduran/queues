@@ -52,6 +52,7 @@ class queues_views_handler_field_operations extends views_handler_field {
       }
       $output = theme('links__ctools_dropbutton', array('title' => t('operations'), 'links' => $links));
     }
+    drupal_alter('queues_views_handler_field_operations', $links);
 
     $this->add_ctools_css();
 
