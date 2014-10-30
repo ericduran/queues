@@ -149,6 +149,12 @@ function queues_workbench_revision_operation_process($entity, $operation) {
   // Extract the transition "to state" from the operation key
   // 'queues_workbench_state'.
   $event = substr($operation->operation, 17);
+  if ($event == 'publish') {
+    // This is needed now because of the change to
+    // on_enter_published.
+    $entity->default_revision = TRUE;
+    $entity->save();
+  }
   $machine = state_flow_entity_load_state_machine($entity, 'queues');
   $machine->fire_event($event);
 }
