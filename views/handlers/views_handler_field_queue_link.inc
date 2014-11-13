@@ -44,10 +44,4 @@ class queues_views_handler_field_queue_operations extends queues_views_handler_f
 
     return $output;
   }
-
-  function add_ctools_css() {
-    parent::add_ctools_css();
-    // Include the dropbutton css from pub_editorial.
-    drupal_add_css(drupal_get_path('module', 'pub_editorial') . '/css/pub_editorial.css', array('weight' => 10));
-  }
 }
