@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of queues_views_handler_field_operations.
+ * Definition of queues_views_handler_publish_state.
  */
 
 /**
@@ -26,10 +26,10 @@ class queues_views_handler_publish_state extends views_handler_field {
     $output = '';
     $status = $this->get_value($values, 'queues_status');
     if ($status == 1) {
-	  $output = t('Published');
+	    $output = t('Published');
     }
     else {
-	  $output = t('Unpublished');
+	    $output = t('Unpublished');
     }
 
     return $output;
