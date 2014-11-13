@@ -36,6 +36,7 @@ class queues_views_handler_field_queue_operations extends queues_views_handler_f
         );
       }
 
+      drupal_alter('queues_views_handler_field_queue_operations', $links);
       $output = theme('links__ctools_dropbutton', array('title' => t('operations'), 'links' => $links));
     }
 
