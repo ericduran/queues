@@ -10,6 +10,7 @@
  * QueueEntity
  */
 class QueueEntity extends Entity {
+  public $qid;
   public $title;
   public $type;
   public $description;
@@ -39,11 +40,6 @@ class QueueEntity extends Entity {
    */
   protected function defaultLabel() {
     return $this->title;
-  }
-
-
-  public function save() {
-    parent::save();
   }
 
   /**

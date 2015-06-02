@@ -162,6 +162,11 @@ function queue_entity_view($queue_entity, $revision_id = NULL) {
  */
 function queues_form($form, &$form_state, $QueueEntity, $op) {
 
+  $form['qid'] = array(
+    '#type' => 'value',
+    '#value' => isset($QueueEntity->qid) ? $QueueEntity->qid : NULL,
+  );
+
   $form['title'] = array(
     '#type' => 'textfield',
     '#title' => t('Title'),
@@ -214,19 +219,17 @@ function queues_form($form, &$form_state, $QueueEntity, $op) {
     );
   }
 
-
-  field_attach_form('queues', $QueueEntity, $form, $form_state);
-
-  // TODO: Save the "label" of the queue.
   $form['actions'] = array(
     '#type' => 'actions',
     'submit' => array(
       '#type' => 'submit',
       '#value' => t('Save queue'),
       '#weight' => 20,
+      '#submit' => array('queues_form_submit'),
     ),
   );
 
+  field_attach_form('queues', $QueueEntity, $form, $form_state);
 
   return $form;
 }
@@ -235,6 +238,9 @@ function queues_form_submit($form, &$form_state) {
   $QueueEntity = $form_state['queues'];
   entity_form_submit_build_entity('queues', $QueueEntity, $form, $form_state);
   $QueueEntity->save();
+
+  $form_state['values']['qid'] = $QueueEntity->qid;
+  $form_state['qid'] = $QueueEntity->qid;
   $form_state['redirect'] = 'admin/content/queues';
 }
 
